@@ -81,10 +81,26 @@ const BALL_COMMAND = {
   type: 1,
 };
 
+// Simple test command
+const POPULATION_COMMAND = {
+  name: 'population',
+  description: 'Get the population of a penguin species',
+  options: [
+    {
+      type: 3,
+      name: 'species',
+      description: 'Choose a penguin species',
+      required: true,
+      choices: createPenguinChoices(),
+    },
+  ],
+  type: 1,
+};
+
 // Command containing options
 const CHALLENGE_COMMAND = {
   name: 'challenge',
-  description: 'Challenge to a match of rock paper scissors',
+  description: 'Challenge to a match of rock paper scissors - Penguin Edition',
   options: [
     {
       type: 3,
@@ -97,6 +113,6 @@ const CHALLENGE_COMMAND = {
   type: 1,
 };
 
-const ALL_COMMANDS = [PENGUIN_COMMAND, BALL_COMMAND, CHALLENGE_COMMAND];
+const ALL_COMMANDS = [PENGUIN_COMMAND, POPULATION_COMMAND, BALL_COMMAND, CHALLENGE_COMMAND];
 
 InstallGlobalCommands(process.env.APP_ID, ALL_COMMANDS);

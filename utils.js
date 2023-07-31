@@ -110,3 +110,27 @@ export function getPenguinText(str) {
   };
   return text[str];
 }
+
+// Source: https://polarguidebook.com/why-are-penguins-endangered/
+export function getPopulation(str) {
+  let text = {
+    "adelie": 10000000,
+    "african": 41700,
+    "chinstrap": 8000000,
+    "emperor": 476680,
+    "erect-crested": 150000,
+    "fiordland": 30000, // 12500-50000
+    "galapagos": 1200,
+    "gentoo": 774000,
+    "humboldt": 23800,
+    "king": 3200000,
+    "little": 469760,
+    "macaroni": 26500,
+    "magellanic": 2700000, // 2200000-3200000
+    "rockhopper": 2900000, // Northern + Southern variant
+    "royal": 1700000,
+    "snares": 63000,
+    "yellow-eyed": 3000 // 2600-3000
+  };
+  return text[str];
+}
