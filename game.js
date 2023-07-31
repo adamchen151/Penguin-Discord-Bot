@@ -36,47 +36,47 @@ function formatResult(result) {
 
 // this is just to figure out winner + verb
 const RPSChoices = {
-  rock: {
-    description: 'sedimentary, igneous, or perhaps even metamorphic',
-    virus: 'outwaits',
+  little: {
+    description: 'the smallest',
+    king: 'outwaits',
     computer: 'smashes',
-    scissors: 'crushes',
+    galapagos: 'outsmarts',
   },
-  cowboy: {
-    description: 'yeehaw~',
-    scissors: 'puts away',
-    wumpus: 'lassos',
-    rock: 'steel-toe kicks',
+  gentoo: {
+    description: 'fastest swimmer',
+    galapagos: 'swims in a cooler way than',
+    wumpus: 'swims farther than',
+    little: 'swims faster than',
   },
-  scissors: {
-    description: 'careful ! sharp ! edges !!',
-    penguin: 'cuts',
+  galapagos: {
+    description: 'fast molter',
+    emperor: 'molts on',
     computer: 'cuts cord of',
-    virus: 'cuts DNA of',
+    king: 'lives higher than',
   },
-  virus: {
-    description: 'genetic mutation, malware, or something inbetween',
-    cowboy: 'infects',
+  king: {
+    description: 'the king i guess',
+    gentoo: 'asserts dominance over',
     computer: 'corrupts',
-    wumpus: 'infects',
+    wumpus: 'impresses',
   },
   computer: {
-    description: 'beep boop beep bzzrrhggggg',
-    cowboy: 'overwhelms',
-    penguin: 'uninstalls firmware for',
+    description: 'an imposter penguin',
+    gentoo: 'overwhelms',
+    emperor: 'uninstalls firmware for',
     wumpus: 'deletes assets for',
   },
   wumpus: {
-    description: 'the purple Discord fella',
-    penguin: 'draws picture on',
-    rock: 'paints cute face on',
-    scissors: 'admires own reflection in',
+    description: 'the purple Discord fella (not a penguin)',
+    emperor: 'draws picture on',
+    little: 'paints cute face on',
+    galapagos: 'admires own reflection with',
   },
-  penguin: {
-    description: 'simply better',
-    virus: 'ignores',
-    cowboy: 'is shorter than',
-    rock: 'destroys',
+  emperor: {
+    description: 'the most famous',
+    king: 'ignores',
+    gentoo: 'is taller than',
+    little: 'is bigger than',
   },
 };
 

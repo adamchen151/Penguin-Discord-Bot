@@ -7,7 +7,7 @@ import {
   MessageComponentTypes,
   ButtonStyleTypes,
 } from 'discord-interactions';
-import { VerifyDiscordRequest, getRandomEmoji, DiscordRequest, getRandomResponse, getPenguinText, capitalize } from './utils.js';
+import { VerifyDiscordRequest, getRandomEmoji, DiscordRequest, getRandomResponse, getPenguinText, getPopulation, capitalize } from './utils.js';
 import { getShuffledOptions, getResult } from './game.js';
 
 // Create an express app
@@ -46,14 +46,34 @@ app.post('/interactions', async function (req, res) {
 
     // "penguin" command
     if (name === 'penguin' && id) {
-      // User's penguin choice
+      // User's species choice
       const species = req.body.data.options[0].value; //name is Capitalized, value is all lowercase
+      // Get text from a helper function
+      let text = getPenguinText(species); 
+      
       // Send a message into the channel where command was triggered from
-      let text = getPenguinText(species);
       return res.send({
         type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
         data: {
           content: capitalize(species) + ' penguins: ' + text + '🐧',
+        },
+      });
+    }
+    
+    // "population" command
+    if (name === 'population' && id) {
+      // User's species choice 
+      const species = req.body.data.options[0].value; 
+      // Send a message into the channel where command was triggered from
+      let population = getPopulation(species);
+      
+      let comparison = (population / 4500).toFixed(1) + ' times the amount of tigers left in the wild or '+ (population / 3000000).toFixed(4) + ' times the number of people in Toronto'
+      
+      // Send a message into the channel where command was triggered from
+      return res.send({
+        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+        data: {
+          content: 'The population of ' + capitalize(species) + ' penguins is ' + population + ', which is ' + comparison,
         },
       });
     }
@@ -63,17 +83,16 @@ app.post('/interactions', async function (req, res) {
       // User's object choice
       const objectName = req.body.data.options[0].value;
 
-        // Send a message into the channel where command was triggered from
+      // Send a message into the channel where command was triggered from
       return res.send({
         type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
         data: {
           content: 'Penguin thinks: ' + getRandomResponse(),
         },
       });
-      
     }
     
-        // "challenge" command
+    // "challenge" command
     if (name === 'challenge' && id) {
         const userId = req.body.member.user.id;
         // User's object choice
