@@ -7,8 +7,12 @@ import {
   MessageComponentTypes,
   ButtonStyleTypes,
 } from 'discord-interactions';
-import { VerifyDiscordRequest, getRandomEmoji, DiscordRequest, getRandomResponse, getPenguinText, getPopulation, capitalize } from './utils.js';
+import { VerifyDiscordRequest, getRandomEmoji, DiscordRequest, getRandomResponse, getPopulation, capitalize, getUserCount } from './utils.js';
 import { getShuffledOptions, getResult } from './game.js';
+import { createRequire } from 'node:module'; // For OpenAI
+
+const require = createRequire(import.meta.url);
+const axios = require('axios');
 
 // Create an express app
 const app = express();
@@ -48,14 +52,25 @@ app.post('/interactions', async function (req, res) {
     if (name === 'penguin' && id) {
       // User's species choice
       const species = req.body.data.options[0].value; //name is Capitalized, value is all lowercase
-      // Get text from a helper function
-      let text = getPenguinText(species); 
       
+      
+      // Get text because function isn't working for some reason
+      const prompt = 'Write 2-3 sentences about ' + species + ' penguins';
+      const response = await axios.post('https://api.openai.com/v1/engines/text-davinci-003/completions', {
+          prompt: prompt,
+          max_tokens: 250,
+      }, {
+          headers: {
+              'Authorization': `Bearer ` + process.env.OPENAI_API_KEY,
+              'Content-Type': 'application/json'
+          }
+      });
+
       // Send a message into the channel where command was triggered from
       return res.send({
         type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
         data: {
-          content: capitalize(species) + ' penguins: ' + text + '🐧',
+          content: '## __' + capitalize(species) + ' Penguins__\n' + response.data.choices[0].text.trim() + ' 🐧',
         },
       });
     }
@@ -125,11 +140,66 @@ app.post('/interactions', async function (req, res) {
         },
         });
     }
+    
+    // "button" command
+    if (data.name === 'button' && id) {
+      // Send a message with a button
+      return res.send({
+        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+        data: {
+          content: 'Penguin button',
+          // Buttons are inside of action rows
+          components: [
+            {
+              type: MessageComponentTypes.ACTION_ROW,
+              components: [
+                {
+                  type: MessageComponentTypes.BUTTON,
+                  // Value for your app to identify the button
+                  custom_id: 'my_button',
+                  label: '🐧',
+                  style: ButtonStyleTypes.PRIMARY,
+                },
+              ],
+            },
+          ],
+        },
+      });
+    }
+    
+    // "vote" command
+    if (data.name === 'vote') {
+      
+    }
   }
   
   if (type === InteractionType.MESSAGE_COMPONENT) {
-  // custom_id set in payload when sending message component
-  const componentId = data.custom_id;
+    // custom_id set in payload when sending message component
+    const componentId = data.custom_id;
+   
+    
+    if (componentId === 'my_button') {
+      // user who clicked button
+      const userId = req.body.member.user.id;
+      
+      let user_count = 0;
+      // example usage
+      getUserCount('some_user_id')
+        .then(count => {
+          user_count = count;
+        
+          return res.send({
+            type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+            data: { content: `<@${userId}> clicked the penguin button 🐧. <@${userId}> has clicked the penguin button ` + user_count + ' times.'},
+          });
+        
+        })
+        .catch(err => {
+          console.error(err);
+        });
+      
+      //console.log(req.body);
+    }
 
     if (componentId.startsWith('accept_button_')) {
       // get the associated game ID
@@ -193,7 +263,7 @@ app.post('/interactions', async function (req, res) {
           await DiscordRequest(endpoint, {
             method: 'PATCH',
             body: {
-              content: 'Nice choice ' + getRandomEmoji(),
+              content: 'Nice choice 🐧', //  + getRandomEmoji()
               components: []
             }
           });
