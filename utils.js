@@ -1,6 +1,10 @@
 import 'dotenv/config';
 import fetch from 'node-fetch';
 import { verifyKey } from 'discord-interactions';
+import { createRequire } from 'node:module'; // For MySQL connection
+const require = createRequire(import.meta.url);
+
+const sqlite3 = require('sqlite3').verbose();
 
 export function VerifyDiscordRequest(clientKey) {
   return function (req, res, buf, encoding) {
@@ -88,6 +92,7 @@ export function capitalize(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
+/*
 export function getPenguinText(str) {
   let text = {
     "adelie": "This penguin is known for the white ring surrounding its eyes and its black tail. They live along the coastline of Antarctica.",
@@ -110,6 +115,7 @@ export function getPenguinText(str) {
   };
   return text[str];
 }
+*/
 
 // Source: https://polarguidebook.com/why-are-penguins-endangered/
 export function getPopulation(str) {
@@ -134,3 +140,68 @@ export function getPopulation(str) {
   };
   return text[str];
 }
+
+
+
+export function getUserCount(userId) {
+  return new Promise((resolve, reject) => {
+    const db = new sqlite3.Database('./database.db', (err) => {
+      if (err) {
+        console.error(err.message);
+      }
+      console.log('Connected to the database.');
+    });
+    
+    // Create table
+    db.run(`CREATE TABLE IF NOT EXISTS button (user_id TEXT PRIMARY KEY, count INTEGER)`, (err) => {
+      if (err) {
+        return console.log(err.message);
+      }
+      console.log('Table created.');
+    });
+    
+    // Start transaction
+    db.run('BEGIN TRANSACTION;');
+
+    // Try to increment the count
+    db.run(`UPDATE button SET count = count + 1 WHERE user_id = ?;`, [userId], function(err) {
+      if (err) {
+        reject(err);
+        db.run('ROLLBACK;');
+      } else if (this.changes === 0) {  // If no row exists with the user_id, insert one
+        db.run(`INSERT INTO button(user_id, count) VALUES(?, 1);`, [userId], (err) => {
+          if (err) {
+            console.log('Error for some reason.');
+            reject(err);
+            db.run('ROLLBACK;');
+          } else {
+            console.log('Inserted row.');
+          }
+        });
+      } else {
+        console.log('Incremented count.');
+      }
+    });
+
+    // Commit transaction
+    db.run('COMMIT;');
+
+    db.get(`SELECT count FROM button WHERE user_id = ?`, [userId], (err, row) => {
+      if (err) {
+        reject(err);
+      } else {
+        console.log(row.count);
+        resolve(row ? row.count : 0); // Like return
+      }
+    });
+
+    db.close((err) => {
+      if (err) {
+        console.error(err.message);
+      }
+      console.log('Closed the database connection.');
+    });
+  });
+}
+
+

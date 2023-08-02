@@ -53,7 +53,7 @@ function createPenguinChoices() {
 // Simple test command
 const PENGUIN_COMMAND = {
   name: 'penguin',
-  description: 'Get information about a penguin species',
+  description: 'Get information about a penguin species (Powered by OpenAI)',
   options: [
     {
       type: 3,
@@ -113,6 +113,13 @@ const CHALLENGE_COMMAND = {
   type: 1,
 };
 
-const ALL_COMMANDS = [PENGUIN_COMMAND, POPULATION_COMMAND, BALL_COMMAND, CHALLENGE_COMMAND];
+// Command with a button
+const BUTTON_COMMAND = {
+  name: 'button',
+  description: 'Penguin\'s button',
+  type: 1,
+};
+
+const ALL_COMMANDS = [PENGUIN_COMMAND, POPULATION_COMMAND, BALL_COMMAND, CHALLENGE_COMMAND, BUTTON_COMMAND];
 
 InstallGlobalCommands(process.env.APP_ID, ALL_COMMANDS);
