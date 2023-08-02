@@ -160,7 +160,7 @@ export function getUserCount(userId) {
       console.log('Table created.');
     });
     
-    // Start transaction
+    // Start transaction (this allows rollbacks; ensures nothing is commited prematurely)
     db.run('BEGIN TRANSACTION;');
 
     // Try to increment the count

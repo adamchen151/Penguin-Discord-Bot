@@ -51,10 +51,9 @@ app.post('/interactions', async function (req, res) {
     // "penguin" command
     if (name === 'penguin' && id) {
       // User's species choice
-      const species = req.body.data.options[0].value; //name is Capitalized, value is all lowercase
+      const species = req.body.data.options[0].value; 
       
-      
-      // Get text because function isn't working for some reason
+      // Get text because my function isn't working for some reason
       const prompt = 'Write 2-3 sentences about ' + species + ' penguins';
       const response = await axios.post('https://api.openai.com/v1/engines/text-davinci-003/completions', {
           prompt: prompt,
@@ -65,12 +64,13 @@ app.post('/interactions', async function (req, res) {
               'Content-Type': 'application/json'
           }
       });
-
+      const text = response.data.choices[0].text.trim();
+      
       // Send a message into the channel where command was triggered from
       return res.send({
         type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
         data: {
-          content: '## __' + capitalize(species) + ' Penguins__\n' + response.data.choices[0].text.trim() + ' 🐧',
+          content: '## __' + capitalize(species) + ' Penguins__\n' + text + ' 🐧',
         },
       });
     }
