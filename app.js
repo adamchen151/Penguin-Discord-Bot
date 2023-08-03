@@ -1,3 +1,4 @@
+
 import 'dotenv/config';
 import express from 'express';
 import {
@@ -182,9 +183,9 @@ app.post('/interactions', async function (req, res) {
       // user who clicked button
       const userId = req.body.member.user.id;
       
-      let user_count = 0;
-      // example usage
-      getUserCount('some_user_id')
+      let user_count = 1;
+      // get count
+      getUserCount(userId)
         .then(count => {
           user_count = count;
         

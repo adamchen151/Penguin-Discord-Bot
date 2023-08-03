@@ -190,8 +190,7 @@ export function getUserCount(userId) {
       if (err) {
         reject(err);
       } else {
-        console.log(row.count);
-        resolve(row ? row.count : 0); // Like return
+        resolve(row ? row.count : 1); // Like return
       }
     });
 
