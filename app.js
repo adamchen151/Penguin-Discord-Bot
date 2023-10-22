@@ -52,13 +52,12 @@ app.post('/interactions', async function (req, res) {
     // "penguin" command
     if (name === 'penguin' && id) {
       // User's species choice
-      const species = req.body.data.options[0].value; 
-      
+      const prompt = req.body.data.options[0].value;
+      // if (str.includes("octopus"))
       // Get text because my function isn't working for some reason
-      const prompt = 'Write 2-3 sentences about ' + species + ' penguins';
       const response = await axios.post('https://api.openai.com/v1/engines/text-davinci-003/completions', {
           prompt: prompt,
-          max_tokens: 250,
+          max_tokens: 800,
       }, {
           headers: {
               'Authorization': `Bearer ` + process.env.OPENAI_API_KEY,
@@ -71,7 +70,7 @@ app.post('/interactions', async function (req, res) {
       return res.send({
         type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
         data: {
-          content: '## __' + capitalize(species) + ' Penguins__\n' + text + ' 🐧',
+          content: '## __Penguin\'s answer to: ' + prompt + '__\n' + text + ' 🐧',
         },
       });
     }
@@ -148,7 +147,7 @@ app.post('/interactions', async function (req, res) {
       return res.send({
         type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
         data: {
-          content: 'Penguin button',
+          content: 'Add or Remove kill',
           // Buttons are inside of action rows
           components: [
             {
@@ -158,7 +157,14 @@ app.post('/interactions', async function (req, res) {
                   type: MessageComponentTypes.BUTTON,
                   // Value for your app to identify the button
                   custom_id: 'my_button',
-                  label: '🐧',
+                  label: 'Add kill',
+                  style: ButtonStyleTypes.PRIMARY,
+                },
+                {
+                  type: MessageComponentTypes.BUTTON,
+                  // Value for your app to identify the button
+                  custom_id: 'remove_button',
+                  label: 'Remove kill',
                   style: ButtonStyleTypes.PRIMARY,
                 },
               ],
@@ -168,10 +174,7 @@ app.post('/interactions', async function (req, res) {
       });
     }
     
-    // "vote" command
-    if (data.name === 'vote') {
-      
-    }
+    
   }
   
   if (type === InteractionType.MESSAGE_COMPONENT) {
@@ -185,13 +188,37 @@ app.post('/interactions', async function (req, res) {
       
       let user_count = 1;
       // get count
-      getUserCount(userId)
+      getUserCount(userId, 'add')
         .then(count => {
           user_count = count;
         
           return res.send({
             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-            data: { content: `<@${userId}> clicked the penguin button 🐧. <@${userId}> has clicked the penguin button ` + user_count + ' times.'},
+            data: { content: `<@${userId}> has gotten **` + user_count + '** kills in the egg race.'}, //<@${userId}> clicked the add kill button 🐧. 
+          });
+        
+        })
+        .catch(err => {
+          console.error(err);
+        });
+      
+      //console.log(req.body);
+    }
+    
+    // Remove 1
+    if (componentId === 'remove_button') {
+      // user who clicked button
+      const userId = req.body.member.user.id;
+      
+      let user_count = 1;
+      // get count
+      getUserCount(userId, 'remove')
+        .then(count => {
+          user_count = count;
+        
+          return res.send({
+            type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+            data: { content: `<@${userId}> has gotten **` + user_count + '** kills in the egg race.'}, //<@${userId}> clicked the remove kill button 🐧. 
           });
         
         })
