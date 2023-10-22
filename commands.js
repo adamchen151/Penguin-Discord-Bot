@@ -53,14 +53,13 @@ function createPenguinChoices() {
 // Simple test command
 const PENGUIN_COMMAND = {
   name: 'penguin',
-  description: 'Get information about a penguin species (Powered by OpenAI)',
+  description: 'Ask penguin something',
   options: [
     {
       type: 3,
-      name: 'species',
-      description: 'Choose a penguin species',
+      name: 'prompt',
+      description: 'Give penguin a prompt',
       required: true,
-      choices: createPenguinChoices(),
     },
   ],
   type: 1,
@@ -116,7 +115,7 @@ const CHALLENGE_COMMAND = {
 // Command with a button
 const BUTTON_COMMAND = {
   name: 'button',
-  description: 'Penguin\'s button',
+  description: 'Add kill for Egg Race',
   type: 1,
 };
 

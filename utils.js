@@ -143,7 +143,7 @@ export function getPopulation(str) {
 
 
 
-export function getUserCount(userId) {
+export function getUserCount(userId, str) {
   return new Promise((resolve, reject) => {
     const db = new sqlite3.Database('./database.db', (err) => {
       if (err) {
@@ -153,40 +153,69 @@ export function getUserCount(userId) {
     });
     
     // Create table
-    db.run(`CREATE TABLE IF NOT EXISTS button (user_id TEXT PRIMARY KEY, count INTEGER)`, (err) => {
+    db.run(`CREATE TABLE IF NOT EXISTS kills (user_id TEXT PRIMARY KEY, count INTEGER)`, (err) => {
       if (err) {
         return console.log(err.message);
       }
       console.log('Table created.');
     });
     
-    // Start transaction (this allows rollbacks; ensures nothing is commited prematurely)
-    db.run('BEGIN TRANSACTION;');
+    
+    if (str === 'add') {
+      // Start transaction (this allows rollbacks; ensures nothing is commited prematurely)
+      db.run('BEGIN TRANSACTION;');
 
-    // Try to increment the count
-    db.run(`UPDATE button SET count = count + 1 WHERE user_id = ?;`, [userId], function(err) {
-      if (err) {
-        reject(err);
-        db.run('ROLLBACK;');
-      } else if (this.changes === 0) {  // If no row exists with the user_id, insert one
-        db.run(`INSERT INTO button(user_id, count) VALUES(?, 1);`, [userId], (err) => {
-          if (err) {
-            console.log('Error for some reason.');
-            reject(err);
-            db.run('ROLLBACK;');
-          } else {
-            console.log('Inserted row.');
-          }
-        });
-      } else {
-        console.log('Incremented count.');
-      }
-    });
+      // Try to increment the count
+      db.run(`UPDATE kills SET count = count + 1 WHERE user_id = ?;`, [userId], function(err) {
+        if (err) {
+          reject(err);
+          db.run('ROLLBACK;');
+        } else if (this.changes === 0) {  // If no row exists with the user_id, insert one
+          db.run(`INSERT INTO kills(user_id, count) VALUES(?, 1);`, [userId], (err) => {
+            if (err) {
+              console.log('Error for some reason.');
+              reject(err);
+              db.run('ROLLBACK;');
+            } else {
+              console.log('Inserted row.');
+            }
+          });
+        } else {
+          console.log('Incremented count.');
+        }
+      });
+    }
+    
+    
+    else {
+      // Start transaction (this allows rollbacks; ensures nothing is commited prematurely)
+      db.run('BEGIN TRANSACTION;');
+
+      // Try to deincrement the count
+      db.run(`UPDATE kills SET count = count - 1 WHERE user_id = ?;`, [userId], function(err) {
+        if (err) {
+          reject(err);
+          db.run('ROLLBACK;');
+        } else if (this.changes === 0) {  // If no row exists with the user_id, insert zero
+          db.run(`INSERT INTO kills(user_id, count) VALUES(?, 0);`, [userId], (err) => {
+            if (err) {
+              console.log('Error for some reason.');
+              reject(err);
+              db.run('ROLLBACK;');
+            } else {
+              console.log('Inserted row.');
+            }
+          });
+        } else {
+          console.log('Decreased count.');
+        }
+      });
+    }
 
     // Commit transaction
     db.run('COMMIT;');
 
-    db.get(`SELECT count FROM button WHERE user_id = ?`, [userId], (err, row) => {
+    db.get(`SELECT count FROM kills WHERE user_id = ?`, [userId], (err, row) => {
       if (err) {
         reject(err);
       } else {
