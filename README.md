@@ -5,13 +5,9 @@
 - population: gives the population of a penguin species
 - challenge: rock-paper-scissors but with more options, and most of the options are penguin species
 - button: gives the amount of times you've clicked the penguin button
-- 8-ball: an 8-ball
-
-
-It uses a lot of code from [this tutorial](https://github.com/discord/discord-example-app). All of the instructions on their README.md pretty much apply to this repo.  
+- 8-ball: an 8-ball 
 
 Add it on Discord with the link https://discord.com/api/oauth2/authorize?client_id=1134599817390207056&permissions=2048&scope=applications.commands%20bot  
 You can also view the code on Glitch [here](https://glitch.com/edit/#!/fine-splashy-haze).
 
-This connects to a OpenAI API thingy, so if you don't have an OpenAI API key, uncomment the `export function getPenguinText(str)` block in utils.js, and
-replace lines 56-67 in app.js to say `const text = getPenguinText(species)`. This will give pregenerated text instead of AI generated text.
+Requires an OpenAI API key for the penguin command
